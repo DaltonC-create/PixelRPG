@@ -20,18 +20,21 @@ class Level:
         self.create_map()
 
     def create_map(self):
-        # Loop over WORLD_MAP for columns & rows.
-        for row_index, row in enumerate(WORLD_MAP):
-            for col_index, col in enumerate(row):
-                # Set spacing between each index according to the tile size.
-                x = col_index * TILE_SIZE
-                y = row_index * TILE_SIZE
-                # The value at the current index is an x, then it's an obstacle.
-                if col == 'x':
-                    Tile((x, y), [self.visible_sprites, self.obstacle_sprites])
-                # The value at the current index is a p, so it is the player.
-                if col == 'p':
-                    self.player = Player((x, y), [self.visible_sprites], self.obstacle_sprites)
+        # # Loop over WORLD_MAP for columns & rows.
+        # for row_index, row in enumerate(WORLD_MAP):
+        #     for col_index, col in enumerate(row):
+        #         # Set spacing between each index according to the tile size.
+        #         x = col_index * TILE_SIZE
+        #         y = row_index * TILE_SIZE
+        #         # The value at the current index is an x, then it's an obstacle.
+        #         if col == 'x':
+        #             Tile((x, y), [self.visible_sprites, self.obstacle_sprites])
+        #         # The value at the current index is a p, so it is the player.
+        #         if col == 'p':
+        #             self.player = Player((x, y), [self.visible_sprites], self.obstacle_sprites)
+
+        # Place the player in towards the middle of the screen on the path.
+        self.player = Player((2000, 1430), [self.visible_sprites], self.obstacle_sprites)
 
     # Runs the level class.
     def run(self):
@@ -52,10 +55,18 @@ class YSortCameraGroup(pygame.sprite.Group):
         # Vector to help offset the camera according to player position.
         self.offset = pygame.math.Vector2()
 
+        # Creating the floor surface & rectangle to be below everything.
+        self.floor_surf = pygame.image.load("graphics/tilemap/ground.png").convert()
+        self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
+
     def custom_draw(self, player):
         # Getting the offset.
         self.offset.x = player.rect.centerx - self.half_width
         self.offset.y = player.rect.centery - self.half_height
+
+        # Draw the floor.
+        floor_offset_position = self.floor_rect.topleft - self.offset
+        self.display_surface.blit(self.floor_surf, floor_offset_position)
 
         """
         Sort the sprites so the player appears behind it with a greater y position

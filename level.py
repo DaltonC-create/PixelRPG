@@ -6,6 +6,7 @@ from tile import Tile
 from player import Player
 from debug import debug
 from support import *
+from weapon import Weapon
 
 
 class Level:
@@ -18,6 +19,10 @@ class Level:
         # Sprite group setup.
         self.visible_sprites = YSortCameraGroup()
         self.obstacle_sprites = pygame.sprite.Group()
+
+        # Attack sprites.
+        # Stores the current weapon used for attacking.
+        self.current_attack = None
 
         # Sprite setup
         self.create_map()
@@ -61,7 +66,18 @@ class Level:
                             Tile((x, y), [self.visible_sprites, self.obstacle_sprites], "object", surf)
 
         # Place the player in towards the middle of the screen on the path.
-        self.player = Player((2000, 1430), [self.visible_sprites], self.obstacle_sprites)
+        self.player = Player((2000, 1430), [self.visible_sprites], self.obstacle_sprites, self.create_attack,
+                             self.destroy_attack)
+
+    # Bring weapon to the level class to interact with objects.
+    def create_attack(self):
+        self.current_attack = Weapon(self.player, [self.visible_sprites])
+
+    # Destroys the attack image on screen & sets current_attack back to none.
+    def destroy_attack(self):
+        if self.current_attack:
+            self.current_attack.kill()
+        self.current_attack = None
 
     # Runs the level class.
     def run(self):

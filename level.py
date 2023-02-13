@@ -1,8 +1,11 @@
+import random
 import pygame
+
 from settings import *
 from tile import Tile
 from player import Player
 from debug import debug
+from support import *
 
 
 class Level:
@@ -20,18 +23,42 @@ class Level:
         self.create_map()
 
     def create_map(self):
-        # # Loop over WORLD_MAP for columns & rows.
-        # for row_index, row in enumerate(WORLD_MAP):
-        #     for col_index, col in enumerate(row):
-        #         # Set spacing between each index according to the tile size.
-        #         x = col_index * TILE_SIZE
-        #         y = row_index * TILE_SIZE
-        #         # The value at the current index is an x, then it's an obstacle.
-        #         if col == 'x':
-        #             Tile((x, y), [self.visible_sprites, self.obstacle_sprites])
-        #         # The value at the current index is a p, so it is the player.
-        #         if col == 'p':
-        #             self.player = Player((x, y), [self.visible_sprites], self.obstacle_sprites)
+        # dict of the different layouts of the map.
+        layouts = {
+            "boundary": import_csv_layout("map/map_FloorBlocks.csv"),
+            "grass": import_csv_layout("map/map_Grass.csv"),
+            "object": import_csv_layout("map/map_Objects.csv")
+        }
+
+        # Importing all the graphics for objects.
+        graphics = {
+            "grass": import_folder("graphics/grass"),
+            "objects": import_folder("graphics/objects")
+        }
+
+        # Loop over dictionary containing the layouts of image.
+        for style, layout in layouts.items():
+            # Loop over layout for columns & rows.
+            for row_index, row in enumerate(layout):
+                for col_index, col in enumerate(row):
+                    # Avoid boundaries being placed in incorrect areas.
+                    if col != "-1":
+                        # Set spacing between each index according to the tile size.
+                        x = col_index * TILE_SIZE
+                        y = row_index * TILE_SIZE
+                        if style == "boundary":
+                            Tile((x, y), [self.obstacle_sprites], "invisible")
+
+                        if style == "grass":
+                            # Get random grass image.
+                            random_grass_image = random.choice(graphics["grass"])
+                            # Create a grass tile.
+                            Tile((x, y), [self.visible_sprites, self.obstacle_sprites], "grass", random_grass_image)
+
+                        if style == "object":
+                            # Create an object tile.
+                            surf = graphics["objects"][int(col)]
+                            Tile((x, y), [self.visible_sprites, self.obstacle_sprites], "object", surf)
 
         # Place the player in towards the middle of the screen on the path.
         self.player = Player((2000, 1430), [self.visible_sprites], self.obstacle_sprites)

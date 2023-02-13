@@ -10,7 +10,11 @@ class Tile(pygame.sprite.Sprite):
         self.sprite_type = sprite_type
         # Image based on the surface parameter, default is a black surface.
         self.image = surface
-        # Rectangle of the tiles.
-        self.rect = self.image.get_rect(topleft=position)
+        if self.sprite_type == "object":
+            # Do an offset for size of larger objects .
+            self.rect = self.image.get_rect(topleft=(position[0], position[1] - TILE_SIZE))
+        else:
+            # Rectangle of the tiles.
+            self.rect = self.image.get_rect(topleft=position)
         # Set hit box to be slightly smaller than the rectangle.
         self.hit_box = self.rect.inflate(0, -10)

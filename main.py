@@ -10,6 +10,7 @@ class Game:
 
         # General Setup.
         pygame.init()
+        # Set screen size & title.
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Pixel RPG 🤌")
         self.clock = pygame.time.Clock()
@@ -21,6 +22,7 @@ class Game:
         # Event loop.
         while True:
             for event in pygame.event.get():
+                # Exit & close the game.
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -32,6 +34,7 @@ class Game:
             self.clock.tick(FPS)
 
 
+# Run the program.
 if __name__ == '__main__':
     game = Game()
     game.run()

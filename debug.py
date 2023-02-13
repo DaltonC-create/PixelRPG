@@ -1,3 +1,4 @@
+""" This file creates information for debugging when used in other files. """
 import pygame
 pygame.init()
 font = pygame.font.Font(None, 30)
